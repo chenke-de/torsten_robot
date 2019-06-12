@@ -1,0 +1,16 @@
+*.so*
+*.o
+*.o.*
+*.a*
+*.ko*
+*symvers
+pcan.mod
+modules.order
+pcan.mod.c
+bitratetest
+filtertest
+pcan-settings
+pcanfdtst
+receivetest
+transmitest
+

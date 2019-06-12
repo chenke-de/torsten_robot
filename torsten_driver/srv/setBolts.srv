@@ -1,0 +1,10 @@
+# This is the srv type for moving the bolts up and down
+
+# data: true or false
+bool data
+
+---
+
+bool done
+# reply true: bolts moved up or down
+

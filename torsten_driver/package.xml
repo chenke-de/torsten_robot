@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<package>
+  <name>torsten_driver</name>
+  <version>0.0.0</version>
+  <description>The torsten driver package</description>
+
+  <maintainer email="christoph.henke@ifu.rwth-aachen.de">Christoph Henke</maintainer>
+  <maintainer email="sebastian.reuter@ifu.rwth-aachen.de">Sebastian Reuter</maintainer>
+
+  <license>BSD</license>
+
+  <author email="christoph.henke@ifu.rwth-aachen.de">Christoph Henke</author>
+  <author email="sebastian.reuter@ifu.rwth-aachen.de">Sebastian Reuter</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>rosconsole</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>pluginlib</build_depend>
+
+
+  <run_depend>message_runtime</run_depend>
+  <run_depend>rosconsole</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>  
+  <run_depend>tf</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>pluginlib</run_depend>
+
+
+  <export>
+  </export>
+</package>
