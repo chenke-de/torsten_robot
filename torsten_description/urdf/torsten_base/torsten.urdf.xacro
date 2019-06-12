@@ -1,0 +1,231 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" 
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller" 
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+ 
+  <!-- sensors -->
+  <xacro:include filename="$(find torsten_description)/urdf/torsten_base/base.gazebo.xacro"/>
+  <xacro:include filename="$(find torsten_description)/urdf/torsten_base/base.transmission.xacro"/>
+ 
+  <!-- simplified box collision geometry for base -->
+  <xacro:property name="base_size_x" value="1.228"/>
+  <xacro:property name="base_size_y" value="0.740"/>
+  <xacro:property name="base_size_z" value="0.180"/>
+  <xacro:property name="base_mass" value="1.0"/>
+
+  <!-- base inertia-->
+  <xacro:property name="base_i_xx" value="0.00136792587"/>
+  <xacro:property name="base_i_xy" value="0.00001221586"/>
+  <xacro:property name="base_i_xz" value="0.00000103141"/>
+  <xacro:property name="base_i_yy" value="0.00281470490"/>
+  <xacro:property name="base_i_yz" value="0.00000870947"/>
+  <xacro:property name="base_i_zz" value="0.00400655853"/>
+  
+  <!-- offset of the wheel axis back and front-->
+  <xacro:property name="front_axis_offset_x" value="0.3895"/>
+  <xacro:property name="back_axis_offset_x" value="-0.3905"/>
+
+  <!-- specific wheel origin y offsets-->
+  <xacro:property name="wheel_offset_y_fl" value="0.3335"/>
+  <xacro:property name="wheel_offset_y_fr" value="-0.33505"/>
+  <xacro:property name="wheel_offset_y_rl" value="0.33505"/>
+  <xacro:property name="wheel_offset_y_rr" value="-0.3335"/>
+
+  <!-- wheel origin z offsets relativ to base link origin-->
+  <xacro:property name="wheel_offset_z" value="0.079"/>
+
+  <!-- x-rotation left and right wheels-->
+  <xacro:property name="rot_left_x" value="${-M_PI/2}"/>
+  <xacro:property name="rot_right_x" value="${M_PI/2}"/>
+
+  <!-- wheel parameters-->
+  <xacro:property name="wheel_mass" value="0.1"/>
+  <xacro:property name="wheel_radius" value="0.095"/>
+  <xacro:property name="wheel_origin_offset_z" value="-0.045975"/>
+
+  <!-- wheel inertia-->
+  <xacro:property name="mass_center_offset_z" value="-0.0408860"/>
+  <xacro:property name="wheel_i_xx" value="0.00000372934"/>
+  <xacro:property name="wheel_i_xy" value="0.0"/>
+  <xacro:property name="wheel_i_xz" value="0.0"/>
+  <xacro:property name="wheel_i_yy" value="0.00000372937"/>
+  <xacro:property name="wheel_i_yz" value="0.0"/>
+  <xacro:property name="wheel_i_zz" value="0.00000594119"/>
+
+  <xacro:property name="wheel_joint_damping" value="1.0"/>
+  <xacro:property name="wheel_joint_friction" value="1.0"/>
+  <xacro:property name="wheel_joint_effort" value="30"/>
+  <xacro:property name="wheel_joint_velocity" value="10"/>
+  <xacro:property name="wheel_joint_safety_k_velocity" value="10.0"/>
+  <xacro:property name="M_PI" value="3.1415926535897931" />
+
+
+  <xacro:macro name="torsten_base" params="name">
+
+    <link name="${name}_link">
+      <inertial>
+        <mass value="${base_mass}"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="${base_i_xx}" ixy="${base_i_xy}" ixz="${base_i_xz}" iyy="${base_i_yy}" iyz="${base_i_yz}" izz="${base_i_zz}"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0.06" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://torsten_description/meshes/visual/torsten_frame.dae"/>
+        </geometry>
+      </visual>
+      <visual>
+        <origin xyz="0.0 0.0 0.06" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://torsten_description/meshes/visual/torsten_checker_plate.dae"/>
+        </geometry>
+      </visual>
+       <collision>
+        <origin xyz="0 0 0.06" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://torsten_description/meshes/collision/torsten_frame_collision.dae"/>
+        </geometry>
+      </collision>
+       <collision>
+        <origin xyz="0.13 0.02 0.12" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://torsten_description/meshes/collision/torsten_checker_plate_collision.dae"/>
+        </geometry>
+      </collision>
+    </link>
+   
+
+    <!-- front left wheel -->
+    <joint name="wheel_joint_fl" type="continuous">
+      <axis xyz="0 0 1"/>
+      <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}"/>
+      <origin xyz="${front_axis_offset_x} ${wheel_offset_y_fl} ${wheel_offset_z}" rpy="${rot_left_x} 0 0"/>
+      <parent link="${name}_link"/>
+      <dynamics damping="${wheel_joint_damping}" friction="${wheel_joint_friction}"/>
+      <safety_controller k_velocity="${wheel_joint_safety_k_velocity}"/>
+      <child link="wheel_link_fl"/>
+    </joint>
+
+    <link name="wheel_link_fl">
+      <inertial>
+        <mass value="${wheel_mass}"/>
+        <origin xyz="0 0 ${mass_center_offset_z}"/>
+        <inertia ixx="${wheel_i_xx}" ixy="${wheel_i_xy}" ixz="${wheel_i_xz}" iyy="${wheel_i_yy}" iyz="${wheel_i_yz}" izz="${wheel_i_zz}"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://torsten_description/meshes/visual/torsten_wheel_left_aligned.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${wheel_origin_offset_z}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.1" radius="${wheel_radius}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- front right wheel -->
+    <joint name="wheel_joint_fr" type="continuous">
+      <axis xyz="0 0 1"/>
+      <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}"/>
+      <origin xyz="${front_axis_offset_x} ${wheel_offset_y_fr} ${wheel_offset_z}" rpy="${rot_right_x} 0 0"/>
+      <parent link="${name}_link"/>
+      <dynamics damping="${wheel_joint_damping}" friction="${wheel_joint_friction}"/>
+      <safety_controller k_velocity="${wheel_joint_safety_k_velocity}"/>
+      <child link="wheel_link_fr"/>
+    </joint>
+
+    <link name="wheel_link_fr">
+      <inertial>
+        <mass value="${wheel_mass}"/>
+        <origin xyz="0 0 ${mass_center_offset_z}"/>
+        <inertia ixx="${wheel_i_xx}" ixy="${wheel_i_xy}" ixz="${wheel_i_xz}" iyy="${wheel_i_yy}" iyz="${wheel_i_yz}" izz="${wheel_i_zz}"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://torsten_description/meshes/visual/torsten_wheel_right_aligned.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${wheel_origin_offset_z}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.1" radius="${wheel_radius}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- rear left wheel -->
+    <joint name="wheel_joint_rl" type="continuous">
+      <axis xyz="0 0 1"/>
+      <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}"/>
+      <origin xyz="${back_axis_offset_x} ${wheel_offset_y_rl} ${wheel_offset_z}" rpy="${rot_left_x} 0 0"/>
+      <parent link="${name}_link"/>
+      <dynamics damping="${wheel_joint_damping}" friction="${wheel_joint_friction}"/>
+      <safety_controller k_velocity="${wheel_joint_safety_k_velocity}"/>
+      <child link="wheel_link_rl"/>
+    </joint>
+
+    <link name="wheel_link_rl">
+      <inertial>
+        <mass value="${wheel_mass}"/>
+        <origin xyz="0 0 ${mass_center_offset_z}"/>
+        <inertia ixx="${wheel_i_xx}" ixy="${wheel_i_xy}" ixz="${wheel_i_xz}" iyy="${wheel_i_yy}" iyz="${wheel_i_yz}" izz="${wheel_i_zz}"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://torsten_description/meshes/visual/torsten_wheel_left_aligned.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${wheel_origin_offset_z}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.1" radius="${wheel_radius}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- rear right wheel -->
+    <joint name="wheel_joint_rr" type="continuous">
+      <axis xyz="0 0 1"/>
+      <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}"/>
+      <origin xyz="${back_axis_offset_x} ${wheel_offset_y_rr} ${wheel_offset_z}" rpy="${rot_right_x} 0 0"/>
+      <parent link="${name}_link"/>
+      <dynamics damping="${wheel_joint_damping}" friction="${wheel_joint_friction}"/>
+      <safety_controller k_velocity="${wheel_joint_safety_k_velocity}"/>
+      <child link="wheel_link_rr"/>
+    </joint>
+
+    <link name="wheel_link_rr">
+      <inertial>
+        <mass value="${wheel_mass}"/>
+        <origin xyz="0 0 ${mass_center_offset_z}"/>
+        <inertia ixx="${wheel_i_xx}" ixy="${wheel_i_xy}" ixz="${wheel_i_xz}" iyy="${wheel_i_yy}" iyz="${wheel_i_yz}" izz="${wheel_i_zz}"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://torsten_description/meshes/visual/torsten_wheel_right_aligned.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${wheel_origin_offset_z}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.1" radius="${wheel_radius}"/>
+        </geometry>
+      </collision>
+    </link>
+ 
+    <gazebo>
+      <static>false</static>
+    </gazebo>
+
+    <!-- extensions -->
+    <xacro:torsten_base_gazebo/>
+
+  </xacro:macro>
+</robot>

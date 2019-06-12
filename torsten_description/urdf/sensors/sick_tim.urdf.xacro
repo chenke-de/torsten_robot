@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<robot xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+  xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+  xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+  xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="sick_tim571" params="name parent_link ros_topic x_offset y_offset z_offset roll_offset pitch_offset yaw_offset">
+    <xacro:sick_tim name="${name}" parent_link="${parent_link}" ros_topic="${ros_topic}"
+      x_offset="${x_offset}" y_offset="${y_offset}" z_offset="${z_offset}" 
+      roll_offset="${roll_offset}" pitch_offset="${pitch_offset}" yaw_offset="${yaw_offset}"
+      length="0.06" width="0.06" height="0.086" mass="0.250"
+      min_range="0.05" max_range="10.0"
+      mesh="package://torsten_description/meshes/visual/sick_aligned.dae" scale="0.001 0.001 0.001"/>
+  </xacro:macro>
+
+  <xacro:macro name="sick_tim" params="name parent_link ros_topic x_offset y_offset z_offset roll_offset pitch_offset yaw_offset length width height mass min_range max_range mesh scale">
+    <!-- z_offset: distance between base plate and laser center (= center of mesh) -->
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent_link}" />
+      <child link="${name}" />
+      <origin rpy="${roll_offset} ${pitch_offset} ${yaw_offset}" xyz="${x_offset} ${y_offset} ${z_offset}"/>
+    </joint>
+
+    <link name="${name}">
+      <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.06"/>
+        <geometry>
+          <mesh filename="${mesh}"/>
+        </geometry>
+        <material name="blue" >
+          <color rgba="0 0 1 1" />
+        </material>
+      </visual>
+      <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.02"/>
+        <geometry>
+          <cylinder length="0.09" radius="0.035"/>          
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="${mass}" />
+        <origin xyz="0 0 -0.026" />
+        <inertia ixx="${0.0833333 * mass * (width * width + height * height)}" ixy="0.0" ixz="0.0"
+          iyy="${0.0833333 * mass * (length * length + height * height)}" iyz="0.0"
+          izz="${0.0833333 * mass * (length * length + width * width)}" />
+      </inertial>
+    </link>
+    <xacro:sick_tim_laser_gazebo_v0 name="${name}" link="${name}" ros_topic="${ros_topic}" update_rate="15.0" min_angle="-2.357" max_angle="2.357" min_range="${min_range}" max_range="${max_range}"/>
+  </xacro:macro>
+
+  <xacro:macro name="sick_tim_laser_gazebo_v0" params="name link ros_topic update_rate min_angle max_angle min_range max_range">
+    <gazebo reference="${link}">
+      <!--material value="Gazebo/Blue" /-->
+      <sensor name="${name}" type="ray">
+        <!--always_on>true</always_on-->
+        <update_rate>${update_rate}</update_rate>
+        <pose>0 0 0 0 0 0</pose>
+        <visualize>true</visualize>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>812</samples>
+              <resolution>0.333</resolution>
+              <min_angle>${min_angle}</min_angle>
+              <max_angle>${max_angle}</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>${min_range}</min>
+            <max>${max_range}</max>
+            <resolution>0.001</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.001</stddev>
+          </noise>
+        </ray>
+        <plugin name="gazebo_ros_${name}_controller" filename="libgazebo_ros_laser.so">
+          <updateRate>${update_rate}</updateRate>
+          <topicName>${ros_topic}</topicName>
+          <frameName>${link}</frameName>
+        </plugin>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+</robot>
