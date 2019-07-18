@@ -58,8 +58,9 @@ CanDriver::CanDriver(){
     // get node name
     name_ = ros::this_node::getName().c_str();
 
-	// initialize odometry publisher
+	// initialize publishers
 	odom_pub_ = nh.advertise<nav_msgs::Odometry>("odom", 50);
+    torsten_state_pub_ = nh.advertise<torsten_msgs::TorstenState>("torsten_state", 50);
 
 	// initialize ROS parameters
     load_parameters();
@@ -199,15 +200,6 @@ CanDriver::load_parameters(){
         ROS_INFO("%s: didn't find param 'print_odom_values_to_debug' took default value :%d", name_.c_str(), cfg_print_odom_values_to_debug_);
     }
 
-    if (nh.hasParam("/torsten_driver_node/cfg_log_data")){
-        nh.getParam("/torsten_driver_node/cfg_log_data", cfg_log_data_);
-        ROS_INFO("%s: Assigned cfg_log_data: %d", name_.c_str(), cfg_log_data_);
-    }
-    else{
-        cfg_log_data_ = false;
-        ROS_INFO("%s: didn't find param 'cfg_log_data' took default value :%d", name_.c_str(), cfg_log_data_);
-    }
-
     /*
      * This parameter defines if the warn fields of the safety laser scanners
      * are used or not. Using the warn fields enables the robot to reduce it's velocity
@@ -219,7 +211,7 @@ CanDriver::load_parameters(){
     }
     else{
         cfg_use_warn_fields_ = true;
-        ROS_INFO("%s: didn't find param 'cfg_use_warn_fields' took default value :%d", name_.c_str(), cfg_log_data_);
+        ROS_INFO("%s: didn't find param 'cfg_use_warn_fields' took default value :%d", name_.c_str(), cfg_use_warn_fields_);
     }
 }
 
@@ -708,37 +700,36 @@ CanDriver::scan_field_safety_evaluation(const ros::TimerEvent& e)
 	}
 }
 
-/* Method for printing and logging CAN input data and robot state
+/* Publishing torsten state information
  *
  */
 void
-CanDriver::log_robot_state(const ros::TimerEvent& e) {
-	/* TODO: Move this logging functionality into publisher
-	 * of the current robot state - specify state msg type
-	 */
-	if (cfg_log_data_){
-		ROS_INFO("%s: warning_field_1_host_ = %d", name_.c_str(), warning_field_1_host_);
-		ROS_INFO("%s: warning_field_2_host_ = %d", name_.c_str(), warning_field_2_host_);
-		ROS_INFO("%s: warning_field_1_guest_ = %d", name_.c_str(), warning_field_1_guest_);
-		ROS_INFO("%s: warning_field_2_guest_ = %d", name_.c_str(), warning_field_2_guest_);
-		ROS_INFO("%s: protective_field_host_ = %d", name_.c_str(), protective_field_host_);
-		ROS_INFO("%s: protective_field_guest_ = %d", name_.c_str(), protective_field_guest_);
+CanDriver::publish_torsten_state(const ros::TimerEvent& e) {
+    torsten_msgs::TorstenState msg;
 
-		ROS_INFO("%s: bolts_down = %d", name_.c_str(), bolts_down_received_);
-		ROS_INFO("%s: bolts_up = %d", name_.c_str(), bolts_up_received_);
-		ROS_INFO("%s: handling = %d", name_.c_str(), handling_received_);
-		ROS_INFO("%s: navigation = %d", name_.c_str(), navigation_received_);
-		ROS_INFO("%s: autonomy = %d", name_.c_str(), autonomy_received_);
-		ROS_INFO("%s: error = %d", name_.c_str(), error_received_);
-		ROS_INFO("%s: pulse = %d", name_.c_str(), pulse_received_);
-		ROS_INFO("%s: isLoadedRespond = %d", name_.c_str(), isLoaded());
-		ROS_INFO("%s: isInHandlingModeRespond = %d", name_.c_str(), isInHandlingMode());
-		ROS_INFO("%s: isInNavigationModeRespond = %d", name_.c_str(), isInAutonomousMode());
-		ROS_INFO("%s: isErrorRespond = %d", name_.c_str(), isError());
-		ROS_INFO("%s: isBoltsMoveUp = %d", name_.c_str(), isBoltsMovedUp());
-		ROS_INFO("%s: isBoltsMoveDown = %d", name_.c_str(), isBoltsMovedDown());
-		ROS_INFO("%s: PulseRespond = %d", name_.c_str(), Pulse());
-	}
+    msg.loaded =                    isLoaded();
+    msg.handling_mode =             isInHandlingMode();
+    msg.navigation_mode =           isInNavigationMode();
+    msg.autonomous_mode =           isInAutonomousMode();
+    msg.error =                     isError();
+    msg.pulse =                     Pulse();
+    msg.bolts_move_up =             isBoltsMovedUp();
+    msg.bolts_move_down =           isBoltsMovedDown();
+    msg.bolts_down_received =       bolts_down_received_;
+    msg.bolts_up_received =         bolts_up_received_;
+    msg.handling_received =         handling_received_;
+    msg.navigation_received =       navigation_received_;
+    msg.autonomy_received =         autonomy_received_;
+    msg.error_received =            error_received_;
+    msg.pulse_received =            pulse_received_;
+    msg.warning_field_1_host =      warning_field_1_host_;
+    msg.warning_field_2_host =      warning_field_2_host_;
+    msg.warning_field_1_guest =     warning_field_1_guest_;
+    msg.warning_field_2_guest =     warning_field_2_guest_;
+    msg.protective_field_host =     protective_field_host_;
+    msg.protective_field_guest =    protective_field_guest_;
+
+    torsten_state_pub_.publish(msg);
 }
 
 /* Getters and Setters

@@ -55,6 +55,9 @@
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/String.h>
 
+// torsten msgs
+#include <torsten_msgs/TorstenState.h>
+
 // CAN interfaces and message header
 #include <CANInterface.h>
 #include <CANMessage.h>
@@ -104,6 +107,9 @@
 	  // subscriber of /odom msgs
 	  void publish_odom(const ros::TimerEvent& e);
 
+      // publish torsten state
+      void publish_torsten_state(const ros::TimerEvent& e);
+
 	  // services
       bool setLoadedsrv(torsten_driver::setBit::Request &req, torsten_driver::setBit::Response &res);
       bool setInHandlingModesrv(torsten_driver::setBit::Request &req, torsten_driver::setBit::Response &res);
@@ -124,14 +130,8 @@
 	  // method for reducing speed if warning field is activated
 	  void scan_field_safety_evaluation(const ros::TimerEvent& e);
 
-	  // method for logging the current robot state
-	  void log_robot_state(const ros::TimerEvent& e);
-
 	  // method for closing the CAN connection
 	  void close_connection();
-
-	  // method for logging data
-	  void logInputData();
 
 	  // getter and setter
 	  bool isBoltsMovedUp() const;
@@ -156,6 +156,7 @@
 
 	  // publisher
 	  ros::Publisher odom_pub_;
+      ros::Publisher torsten_state_pub_;
 
 	  // CAN interface variable
 	  CANInterface* can_bus_;
@@ -169,8 +170,7 @@
 	  ros::Time last_sound_cmd_time_;
 
 	  // config variables
-	  bool cfg_log_data_;
-	  bool    cfg_print_odom_values_to_debug_;
+	  bool cfg_print_odom_values_to_debug_;
 	  double cfg_declare_dead_duration_;
 	  double cfg_continuous_angular_factor_;
 

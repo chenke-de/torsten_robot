@@ -61,11 +61,11 @@ int main(int argc, char **argv)
 	// publish odometry info in ROS
 	ros::Timer timer_publish_odom = 	tcd.nh.createTimer(ros::Duration(0.001),  &CanDriver::publish_odom, &tcd);
 
+    // publish torsten_state
+    ros::Timer timer_torsten_state = 	tcd.nh.createTimer(ros::Duration(0.001),  &CanDriver::publish_torsten_state, &tcd);
+
 	// reduces maximum allowed velocity if warning field is activated
 	ros::Timer timer_reduce_speed_safety = 	tcd.nh.createTimer(ros::Duration(0.01),  &CanDriver::scan_field_safety_evaluation, &tcd);
-
-	// log robot state data
-	ros::Timer log_robot_state = 	tcd.nh.createTimer(ros::Duration(0.1),  &CanDriver::log_robot_state, &tcd);
 
 	// standard service server
 	ros::ServiceServer driver_server_setLoaded                   = tcd.nh.advertiseService("/torsten_driver_node/setLoaded", &CanDriver::setLoadedsrv, &tcd);
