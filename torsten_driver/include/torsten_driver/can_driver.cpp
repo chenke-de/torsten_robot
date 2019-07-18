@@ -55,12 +55,8 @@
  * Establishing the CAN connection
  */
 CanDriver::CanDriver(){
-
-	// node name - used for namespace of published topics
-	name_ = "/torsten_driver_node";
-
-	// initialize test publishers for actually sent cmd vel via CAN bus
-	cmd_send_pub_ = nh.advertise<geometry_msgs::Twist>("cmd_send", 20);
+    // get node name
+    name_ = ros::this_node::getName().c_str();
 
 	// initialize odometry publisher
 	odom_pub_ = nh.advertise<nav_msgs::Odometry>("odom", 50);
@@ -139,10 +135,10 @@ CanDriver::CanDriver(){
 	// establish CAN bus connection
 	while(true){
 		if( can_bus_->init_connection() ){
-			ROS_INFO("%s: CAN connection established - starting procedure", name_.c_str());
+			ROS_INFO("%s: CAN connection established", name_.c_str());
 			break;
 		} else{
-			ROS_WARN("%s: CAN connection not successful - retrying connection initialization", name_.c_str());
+			ROS_WARN("%s: CAN connection not established - retrying connection initialization", name_.c_str());
 		}
 		// sleep for a second
 		sleep(1);
@@ -163,7 +159,6 @@ void
 CanDriver::close_connection(){
 	can_bus_->close_connection();
 	ROS_INFO("%s: CAN connection closed", name_.c_str());
-
 }
 
 /* Method for loading ROS parameters
@@ -226,7 +221,6 @@ CanDriver::load_parameters(){
         cfg_use_warn_fields_ = true;
         ROS_INFO("%s: didn't find param 'cfg_use_warn_fields' took default value :%d", name_.c_str(), cfg_log_data_);
     }
-
 }
 
 /* Callback for moving the bolts up
@@ -512,7 +506,6 @@ CanDriver::can_send_cmd_vel(const ros::TimerEvent& e){
 	// Generate message to publish the actual send vel command - for debugging purposes
 	geometry_msgs::Twist cmd_vel;
 	cmd_vel = cmd_vel_;
-	cmd_send_pub_.publish(cmd_vel);
 
 	// check if the last cmd_vel message is not too old
 	if( (ros::Time::now() - time_last_cmd_vel_) < ros::Duration(cfg_declare_dead_duration_)){

@@ -156,7 +156,6 @@
 
 	  // publisher
 	  ros::Publisher odom_pub_;
-	  ros::Publisher cmd_send_pub_;
 
 	  // CAN interface variable
 	  CANInterface* can_bus_;
