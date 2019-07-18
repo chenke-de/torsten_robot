@@ -95,6 +95,9 @@
 	  // subscriber of /cmd_vel msgs
 	  void cmd_vel_callback(const geometry_msgs::Twist::ConstPtr &cmd_vel);
 
+      // subscriber of /cmd_vel msgs
+      void load_parameters();
+
 	  // subscriber of /sound_cmd msgs
 	  void sound_cmd_callback(const std_msgs::String &sound_cmd);
 

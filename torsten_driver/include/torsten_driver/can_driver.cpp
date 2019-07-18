@@ -59,66 +59,14 @@ CanDriver::CanDriver(){
 	// node name - used for namespace of published topics
 	name_ = "/torsten_driver_node";
 
-	/*
-	 * TODO: This parameter validation and setting should be
-	 * done in a separate configuration class structure
-	 */
-	// load ros parameters and validate them
-
-	if (nh.hasParam("/torsten_driver_node/declare_dead_duration")){
-		nh.getParam("/torsten_driver_node/declare_dead_duration", cfg_declare_dead_duration_);
-	}
-	else{
-		cfg_declare_dead_duration_ = 1.0;
-		ROS_INFO("CANDriver - didn't find param 'torsten_driver_node/declare_dead_duration' took default value :%f", cfg_declare_dead_duration_);
-	}
-
-	if (nh.hasParam("/torsten_driver_node/continuous_angular_factor")){
-		nh.getParam("/torsten_driver_node/continuous_angular_factor", cfg_continuous_angular_factor_);
-	}
-	else{
-		cfg_continuous_angular_factor_ = 1.192054143;
-		ROS_INFO("CANDriver - didn't find param 'torsten_driver_node/continuous_angular_factor' took default value :%f", cfg_continuous_angular_factor_);
-	}
-
-	if (nh.hasParam("/torsten_driver_node/print_odom_values_to_debug")){
-		nh.getParam("/torsten_driver_node/print_odom_values_to_debug", cfg_print_odom_values_to_debug_);
-	}
-	else{
-		cfg_print_odom_values_to_debug_ = false;
-		ROS_INFO("CANDriver - didn't find param 'torsten_driver_node/print_odom_values_to_debug' took default value :%d", cfg_print_odom_values_to_debug_);
-	}
-
-	if (nh.hasParam("/torsten_driver_node/cfg_log_data")){
-		nh.getParam("/torsten_driver_node/cfg_log_data", cfg_log_data_);
-	}
-	else{
-		cfg_log_data_ = false;
-		ROS_INFO("CANDriver - didn't find param 'torsten_driver_node/cfg_log_data' took default value :%d", cfg_log_data_);
-	}
-
-	/*
-	 * This parameter defines if the warn fields of the safety laser scanners
-	 * are used or not. Using the warn fields enables the robot to reduce it's velocity
-	 * through an reliable incoming signal when obstacles are in the near field
-	 */
-	if (nh.hasParam("/torsten_driver_node/cfg_use_warn_fields")){
-		nh.getParam("/torsten_driver_node/cfg_use_warn_fields", cfg_use_warn_fields_);
-	}
-	else{
-		cfg_use_warn_fields_ = true;
-		ROS_INFO("CANDriver - didn't find param 'torsten_driver_node/cfg_use_warn_fields' took default value :%d", cfg_log_data_);
-	}
-
 	// initialize test publishers for actually sent cmd vel via CAN bus
 	cmd_send_pub_ = nh.advertise<geometry_msgs::Twist>("cmd_send", 20);
+
 	// initialize odometry publisher
 	odom_pub_ = nh.advertise<nav_msgs::Odometry>("odom", 50);
 
-	/*
-	 * TODO - cfg values must to be set by high-level skills
-	 * supply service to set values
-	 */
+	// initialize ROS parameters
+    load_parameters();
 
 	// status variables for ramping/velocity reduction modes
 	warn_field_mode_1_ = false;
@@ -128,25 +76,25 @@ CanDriver::CanDriver(){
 	move_base_available_ = false;
 
 	// initialization of configuration variables
-	loaded_ = false;
-	autonomous_mode_ = false;
-	error_ = false;
-	handling_mode_ = false;
-	navigation_mode_ = false;
-	bolts_move_up_ = false;
-	bolts_move_down_ = false;
+	loaded_             = false;
+	autonomous_mode_    = false;
+	error_              = false;
+	handling_mode_      = false;
+	navigation_mode_    = false;
+	bolts_move_up_      = false;
+	bolts_move_down_    = false;
 
 	// initialization of input values
-    bolts_down_received_    		=  false;
-    bolts_up_received_              =  false;
-    handling_received_              =  false;
-    navigation_received_    		=  false;
-    autonomy_received_              =  false;
-    error_received_                 =  false;
-    pulse_received_                 = false;
+	bolts_down_received_    = false;
+	bolts_up_received_      = false;
+	handling_received_      = false;
+	navigation_received_    = false;
+	autonomy_received_      = false;
+	error_received_         = false;
+	pulse_received_         = false;
 
-    // Initialize protective and warning field values
-    warning_field_1_host_	=  false;
+	// Initialize protective and warning field values
+	warning_field_1_host_	=  false;
 	warning_field_2_host_	=  false;
 	warning_field_1_guest_	=  false;
 	warning_field_2_guest_	=  false;
@@ -215,6 +163,69 @@ void
 CanDriver::close_connection(){
 	can_bus_->close_connection();
 	ROS_INFO("%s: CAN connection closed", name_.c_str());
+
+}
+
+/* Method for loading ROS parameters
+ *
+ */
+void
+CanDriver::load_parameters(){
+    /*
+     * TODO: This parameter validation and setting should be
+     * done in a separate configuration class structure
+     */
+    // load ros parameters and validate them
+
+    if (nh.hasParam("/torsten_driver_node/declare_dead_duration")){
+        nh.getParam("/torsten_driver_node/declare_dead_duration", cfg_declare_dead_duration_);
+        ROS_INFO("torsten_driver - 'torsten_driver_node/declare_dead_duration':%f", cfg_declare_dead_duration_);
+    }
+    else{
+        cfg_declare_dead_duration_ = 1.0;
+        ROS_INFO("CANDriver - didn't find param 'torsten_driver_node/declare_dead_duration' took default value :%f", cfg_declare_dead_duration_);
+    }
+
+    if (nh.hasParam("/torsten_driver_node/continuous_angular_factor")){
+        nh.getParam("/torsten_driver_node/continuous_angular_factor", cfg_continuous_angular_factor_);
+        ROS_INFO("torsten_driver - '/torsten_driver_node/continuous_angular_factor':%f", cfg_continuous_angular_factor_);
+    }
+    else{
+        cfg_continuous_angular_factor_ = 1.192054143;
+        ROS_INFO("CANDriver - didn't find param 'torsten_driver_node/continuous_angular_factor' took default value :%f", cfg_continuous_angular_factor_);
+    }
+
+    if (nh.hasParam("/torsten_driver_node/print_odom_values_to_debug")){
+        nh.getParam("/torsten_driver_node/print_odom_values_to_debug", cfg_print_odom_values_to_debug_);
+        ROS_INFO("torsten_driver - '/torsten_driver_node/print_odom_values_to_debug':%d", cfg_print_odom_values_to_debug_);
+    }
+    else{
+        cfg_print_odom_values_to_debug_ = false;
+        ROS_INFO("CANDriver - didn't find param 'torsten_driver_node/print_odom_values_to_debug' took default value :%d", cfg_print_odom_values_to_debug_);
+    }
+
+    if (nh.hasParam("/torsten_driver_node/cfg_log_data")){
+        nh.getParam("/torsten_driver_node/cfg_log_data", cfg_log_data_);
+        ROS_INFO("torsten_driver - '/torsten_driver_node/cfg_log_data':%d", cfg_log_data_);
+    }
+    else{
+        cfg_log_data_ = false;
+        ROS_INFO("CANDriver - didn't find param 'torsten_driver_node/cfg_log_data' took default value :%d", cfg_log_data_);
+    }
+
+    /*
+     * This parameter defines if the warn fields of the safety laser scanners
+     * are used or not. Using the warn fields enables the robot to reduce it's velocity
+     * through an reliable incoming signal when obstacles are in the near field
+     */
+    if (nh.hasParam("/torsten_driver_node/cfg_use_warn_fields")){
+        nh.getParam("/torsten_driver_node/cfg_use_warn_fields", cfg_use_warn_fields_);
+        ROS_INFO("torsten_driver - '/torsten_driver_node/cfg_use_warn_fields':%d", cfg_use_warn_fields_);
+    }
+    else{
+        cfg_use_warn_fields_ = true;
+        ROS_INFO("CANDriver - didn't find param 'torsten_driver_node/cfg_use_warn_fields' took default value :%d", cfg_log_data_);
+    }
 
 }
 
