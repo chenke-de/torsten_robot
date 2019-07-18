@@ -38,7 +38,7 @@
  * Former Author: Sebastian Reuter (sebastian.reuter@ima-zlw-ifu.rwth-aachen.de)
  *********************************************************************/
 
-#include <can_driver.cpp>
+#include <torsten_driver.cpp>
 
 int main(int argc, char **argv)
 {

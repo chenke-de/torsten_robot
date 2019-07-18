@@ -47,7 +47,7 @@
 #include <ros/console.h>
 #include <math.h>
 
-#include <can_driver.h>
+#include <torsten_driver.h>
 
 /* Constructor
  * Initializing private member variables
