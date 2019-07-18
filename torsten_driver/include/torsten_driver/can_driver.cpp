@@ -47,7 +47,6 @@
 #include <ros/console.h>
 #include <math.h>
 
-// class header file
 #include <can_driver.h>
 
 /* Constructor
@@ -665,10 +664,6 @@ CanDriver::publish_torsten_state(const ros::TimerEvent& e) {
     torsten_state_pub_.publish(msg);
 }
 
-/* Getters and Setters
- *
- */
-
 bool
 CanDriver::isBoltsMovedUp() const {
 	return bolts_up_received_;
@@ -686,12 +681,12 @@ CanDriver::isInAutonomousMode() const {
 
 void
 CanDriver::setAutonomousMode(bool autonomous) {
-	autonomous_mode_ = autonomous;
+    autonomous_mode_ = autonomous;
 }
 
 bool
 CanDriver::isError() const {
-		return error_;
+    return error_;
 }
 
 void CanDriver::setError(bool error) {
