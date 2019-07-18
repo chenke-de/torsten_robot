@@ -179,38 +179,38 @@ CanDriver::load_parameters(){
 
     if (nh.hasParam("/torsten_driver_node/declare_dead_duration")){
         nh.getParam("/torsten_driver_node/declare_dead_duration", cfg_declare_dead_duration_);
-        ROS_INFO("torsten_driver - 'torsten_driver_node/declare_dead_duration':%f", cfg_declare_dead_duration_);
+        ROS_INFO("%s: Assigned declare_dead_duration: %f", name_.c_str(), cfg_declare_dead_duration_);
     }
     else{
         cfg_declare_dead_duration_ = 1.0;
-        ROS_INFO("CANDriver - didn't find param 'torsten_driver_node/declare_dead_duration' took default value :%f", cfg_declare_dead_duration_);
+        ROS_INFO("%s: didn't find param 'declare_dead_duration' took default value :%f", name_.c_str(), cfg_declare_dead_duration_);
     }
 
     if (nh.hasParam("/torsten_driver_node/continuous_angular_factor")){
         nh.getParam("/torsten_driver_node/continuous_angular_factor", cfg_continuous_angular_factor_);
-        ROS_INFO("torsten_driver - '/torsten_driver_node/continuous_angular_factor':%f", cfg_continuous_angular_factor_);
+        ROS_INFO("%s: Assigned continuous_angular_factor: %f", name_.c_str(), cfg_continuous_angular_factor_);
     }
     else{
         cfg_continuous_angular_factor_ = 1.192054143;
-        ROS_INFO("CANDriver - didn't find param 'torsten_driver_node/continuous_angular_factor' took default value :%f", cfg_continuous_angular_factor_);
+        ROS_INFO("%s: didn't find param 'continuous_angular_factor' took default value :%f", name_.c_str(), cfg_continuous_angular_factor_);
     }
 
     if (nh.hasParam("/torsten_driver_node/print_odom_values_to_debug")){
         nh.getParam("/torsten_driver_node/print_odom_values_to_debug", cfg_print_odom_values_to_debug_);
-        ROS_INFO("torsten_driver - '/torsten_driver_node/print_odom_values_to_debug':%d", cfg_print_odom_values_to_debug_);
+        ROS_INFO("%s: Assigned print_odom_values_to_debug: %d", name_.c_str(), cfg_print_odom_values_to_debug_);
     }
     else{
         cfg_print_odom_values_to_debug_ = false;
-        ROS_INFO("CANDriver - didn't find param 'torsten_driver_node/print_odom_values_to_debug' took default value :%d", cfg_print_odom_values_to_debug_);
+        ROS_INFO("%s: didn't find param 'print_odom_values_to_debug' took default value :%d", name_.c_str(), cfg_print_odom_values_to_debug_);
     }
 
     if (nh.hasParam("/torsten_driver_node/cfg_log_data")){
         nh.getParam("/torsten_driver_node/cfg_log_data", cfg_log_data_);
-        ROS_INFO("torsten_driver - '/torsten_driver_node/cfg_log_data':%d", cfg_log_data_);
+        ROS_INFO("%s: Assigned cfg_log_data: %d", name_.c_str(), cfg_log_data_);
     }
     else{
         cfg_log_data_ = false;
-        ROS_INFO("CANDriver - didn't find param 'torsten_driver_node/cfg_log_data' took default value :%d", cfg_log_data_);
+        ROS_INFO("%s: didn't find param 'cfg_log_data' took default value :%d", name_.c_str(), cfg_log_data_);
     }
 
     /*
@@ -220,11 +220,11 @@ CanDriver::load_parameters(){
      */
     if (nh.hasParam("/torsten_driver_node/cfg_use_warn_fields")){
         nh.getParam("/torsten_driver_node/cfg_use_warn_fields", cfg_use_warn_fields_);
-        ROS_INFO("torsten_driver - '/torsten_driver_node/cfg_use_warn_fields':%d", cfg_use_warn_fields_);
+        ROS_INFO("%s: Assigned cfg_use_warn_fields: %d", name_.c_str(), cfg_use_warn_fields_);
     }
     else{
         cfg_use_warn_fields_ = true;
-        ROS_INFO("CANDriver - didn't find param 'torsten_driver_node/cfg_use_warn_fields' took default value :%d", cfg_log_data_);
+        ROS_INFO("%s: didn't find param 'cfg_use_warn_fields' took default value :%d", name_.c_str(), cfg_log_data_);
     }
 
 }
