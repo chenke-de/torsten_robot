@@ -84,8 +84,6 @@
   class TorstenDriver{
 
     public:
-	  // typedefs
-	  typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 	  // Constructor
       TorstenDriver();
@@ -178,13 +176,10 @@
 	  geometry_msgs::Twist cmd_vel_;
 	  geometry_msgs::Twist odom_;
 
-	  // declaring the used sound command
-	  std::string sound_cmd_;
-
 	  // tf transform broadcaster - broadcasting current odom frame to tf-tree
 	  tf::TransformBroadcaster odom_broadcaster_;
 
-	  // variables for service calls - ToDo: Replace this stuff with actionserver for bolts and sounds
+	  // variables for service calls - ToDo: Replace with actionserver for bolts and sounds
 	  bool sound_cmd_running_;
 	  bool bolts_cmd_running_;
 
@@ -202,9 +197,6 @@
 	  // waiting for move base start up time
 	  ros::Time wait_for_start_up_move_base_;
 	  ros::Time wait_timer_move_base_come_up_;
-
-	  // boolean marker for shown move base availability
-	  bool move_base_available_;
 
 	  // status bits from RWTH Controller
 	  bool loaded_, handling_mode_, navigation_mode_, autonomous_mode_, error_, pulse_, bolts_move_up_, bolts_move_down_;

@@ -68,9 +68,6 @@ TorstenDriver::TorstenDriver(){
 	warn_field_mode_1_ = false;
 	warn_field_mode_2_ = false;
 
-	// boolean marker for shown move base availability
-	move_base_available_ = false;
-
 	// initialization of configuration variables
 	loaded_             = false;
 	autonomous_mode_    = false;
