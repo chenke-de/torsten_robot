@@ -38,30 +38,27 @@
  * Former Author: Sebastian Reuter (sebastian.reuter@ima-zlw-ifu.rwth-aachen.de)
  *********************************************************************/
 
-// include can specific header files
 #include <can_driver.cpp>
 
 int main(int argc, char **argv)
 {
-	// initialization
-	ros::init(argc, argv, "torsten_can_driver");
+	ros::init(argc, argv, "torsten_driver_node");
 
-	// creating CanDriver instance
 	CanDriver tcd;
 
-	// subscribes cmd_vel messages
+	// subscriber cmd_vel messages
 	ros::Subscriber cmd_vel_sub = tcd.nh.subscribe("cmd_vel", 20, &CanDriver::cmd_vel_callback, &tcd);
 
-	// sends last cmd_vel msg over CAN with 20ms delay
+	// send CAN communication
 	ros::Timer timer_send_cmd_vel = 	tcd.nh.createTimer(ros::Duration(0.001),  &CanDriver::can_send_cmd_vel, &tcd);
 
-	// polls for new odometry info on CAN-bus
+	// read CAN communication
 	ros::Timer timer_read_odom = 		tcd.nh.createTimer(ros::Duration(0.001),  &CanDriver::can_read_odom, &tcd);
 
-	// publish odometry info in ROS
+	// publisher odometry
 	ros::Timer timer_publish_odom = 	tcd.nh.createTimer(ros::Duration(0.001),  &CanDriver::publish_odom, &tcd);
 
-    // publish torsten_state
+    // publisher torsten_state
     ros::Timer timer_torsten_state = 	tcd.nh.createTimer(ros::Duration(0.001),  &CanDriver::publish_torsten_state, &tcd);
 
 	// reduces maximum allowed velocity if warning field is activated
@@ -79,7 +76,6 @@ int main(int argc, char **argv)
 	ros::ServiceServer move_bolts_down_server  = tcd.nh.advertiseService(ros::this_node::getName() + "/move_bolts_down", &CanDriver::moveBoltsDownCB, &tcd);
 	ros::ServiceServer sound_cmd_server        = tcd.nh.advertiseService(ros::this_node::getName() + "/play_sound", &CanDriver::playSoundCB, &tcd);
 
-	// perform ros spin while running
 	while( tcd.nh.ok() ){
 		ros::spin();
 	}
