@@ -53,12 +53,8 @@ catkin_package(
 
 ## Specify additional locations of header files
 include_directories(${catkin_INCLUDE_DIRS})
-include_directories(lib/peak-linux-driver-8.5.1/driver)
-#include_directories(/usr/include)
+#include_directories(lib/peak-linux-driver-8.5.1/driver)
 include_directories(include/torsten_driver)
-
-## Specify additional locations of link directories
-#link_directories(/usr/lib)
 
 ## Declare a C++ library
  add_library(torsten_driver
