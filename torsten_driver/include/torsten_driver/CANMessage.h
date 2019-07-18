@@ -63,32 +63,6 @@ public:
 	}
 
 	/**
-	 * Prints the telegram.
-	 */
-	void print()
-	{
-
-//		// prints last BYTE bit-wise
-//		std::bitset<8> mybits = msg_bDat_[7];
-//		std::string mystring =	mybits.to_string<char,std::string::traits_type,std::string::allocator_type>();
-//
-//        printf("  - R ID:%4x LEN:%1x DATA:%02x %02x %02x %02x %02x %02x %02x %s\n",
-//                (int)msg_ID_, (int)msg_Len_,
-//                (int)msg_bDat_[0], (int)msg_bDat_[1],
-//                (int)msg_bDat_[2], (int)msg_bDat_[3],
-//                (int)msg_bDat_[4], (int)msg_bDat_[5],
-//                (int)msg_bDat_[6], mystring.c_str() );
-
-        printf("  - R ID:%4x LEN:%1x DATA:%02x %02x %02x %02x %02x %02x %02x %02x\n",
-                (int)msg_ID_, (int)msg_Len_,
-                (int)msg_bDat_[0], (int)msg_bDat_[1],
-                (int)msg_bDat_[2], (int)msg_bDat_[3],
-                (int)msg_bDat_[4], (int)msg_bDat_[5],
-                (int)msg_bDat_[6], (int)msg_bDat_[7] );
-	}
-
-
-	/**
 	 * Get the identifier stored in this message structure.
 	 * @return the message identifier.
 	 */
@@ -168,7 +142,5 @@ public:
 		msg_Type_ = type;
 	}
 
-
 };
-//-----------------------------------------------
 #endif

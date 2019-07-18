@@ -1,3 +1,43 @@
+/*********************************************************************
+ *
+ * Software License Agreement (BSD License)
+ *
+ *  Copyright (c) 2016,
+ *  Christoph Henke (christoph.henke@ifu.rwth-aachen.de).
+ *  Sebastian Reuter (sebastian.reuter@ifu.rwth-aachen.de)
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ *   * Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer in the documentation and/or other materials provided
+ *     with the distribution.
+ *   * Neither the name of the institute nor the names of its
+ *     contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ *  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ *  POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Author: Christoph Henke (christoph.henke@ifu.rwth-aachen.de)
+ * Author: Sebastian Reuter (sebastian.reuter@ifu.rwth-aachen.de)
+ *********************************************************************/
+
 #ifndef _CANMESSAGE_ODOMETRY_H_
 #define _CANMESSAGE_ODOMETRY_H_
 
@@ -18,39 +58,19 @@ public:
 
 	};
 
-	/*
-	 * \param vx - Traversal Velocitx in x-direction [m/sec]
-	 * \param vy - Traversal Velocitx in y-direction [m/sec]
-	 * \param v_yaw - Rotational Velocitx  [deg/sec]
-	 * \param handling - ?
-	 * \param navigation - ?
-	 * \param autonomy - is the vehicle in autonomous mode [true] or not [false]
-	 * \param error - is the vehicle in an error state [true] or not [false]
-	 * \param pulse - ?
-	 */
 	void set_msg(float vx, float vy, float v_yaw, bool bolts_down, bool bolts_up, bool handling, bool navigation, bool autonomy, bool error, bool pulse){
-
 		set_velocity(vx, vy, v_yaw);
 		set_cfg_bits(bolts_down, bolts_up, handling, navigation, autonomy, error, pulse);
-
 	};
 
 private:
 
-	/* CAN BE DELETED FOR LIVE SESSION
-	 * Casts float (into short and then into BYTE) and sets corresponding BYTEs of msg
-	 *
-	 * \param vx - lat vel in x-direction [m/s]
-	 * \param vy - lat vel in y-direction [m/s]
-	 * \param v_yaw - rotational velocity [rad/s]
-	 */
 	void set_velocity(float vx, float vy, float v_yaw){
 
 		// converts (float) [m/s] into (short) [mm/s]
 		short short_vx = (short) (10000*vx);
 		short short_vy = (short) (10000*vy);
 		short short_v_yaw = (short) (100*v_yaw);
-
 
 		// converts (short) into (BYTE)
 		BYTE b_vx[2];
@@ -65,7 +85,6 @@ private:
 		b_v_yaw[0] = short_v_yaw & 0xff;		// high
 		b_v_yaw[1] = (short_v_yaw >> 8) & 0xff;	// low
 
-
 		// set values in BYTE-array of message
 		setAt(b_vx[0], 0);
 		setAt(b_vx[1], 1);
@@ -75,12 +94,8 @@ private:
 
 		setAt(b_v_yaw[0], 4);
 		setAt(b_v_yaw[1], 5);
-
 	}
 
-	/* CAN BE DELETED FOR LIVE SESSION
-	 *
-	 */
 	void set_cfg_bits(bool bolts_down, bool bolts_up, bool handling, bool navigation, bool autonomy, bool error, bool pulse){
 
 		// initialize BYTE with ZEROs
@@ -109,7 +124,6 @@ private:
 			cfg |= (1<<0);	// set the ZERO bit = shift 7 times left
 
 		setAt(cfg, 7);
-
 	}
 
 

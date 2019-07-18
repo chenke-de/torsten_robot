@@ -1,3 +1,43 @@
+/*********************************************************************
+ *
+ * Software License Agreement (BSD License)
+ *
+ *  Copyright (c) 2016,
+ *  Christoph Henke (christoph.henke@ifu.rwth-aachen.de).
+ *  Sebastian Reuter (sebastian.reuter@ifu.rwth-aachen.de)
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ *   * Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer in the documentation and/or other materials provided
+ *     with the distribution.
+ *   * Neither the name of the institute nor the names of its
+ *     contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ *  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ *  POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Author: Christoph Henke (christoph.henke@ifu.rwth-aachen.de)
+ * Author: Sebastian Reuter (sebastian.reuter@ifu.rwth-aachen.de)
+ *********************************************************************/
+
 #ifndef _CANMESSAGE_CMD_VEL_H_
 #define _CANMESSAGE_CMD_VEL_H_
 
@@ -13,30 +53,12 @@ public:
 		setType(0x00);
 	};
 
-	~CANMessage_Cmd_Vel(){
+	~CANMessage_Cmd_Vel(){};
 
-	};
-
-	/*
-	 * \param vx - Traversal Velocitx in x-direction [m/sec]
-	 * \param vy - Traversal Velocitx in y-direction [m/sec]
-	 * \param v_yaw - Rotational Velocitx  [deg/sec]
-	 * \param load - is the vehicle loaded [true] or unloaded [false]
-	 * \param handling - ?
-	 * \param navigation - ?
-	 * \param autonomy - is the vehicle in autonomous mode [true] or not [false]
-	 * \param error - is the vehicle in an error state [true] or not [false]
-	 * \param pulse - ?
-	 */
 	void set_msg(float vx, float vy, float v_yaw, bool load, bool handling, bool navigation, bool autonomy, bool error, bool pulse){
-
 		set_velocity(vx, vy, v_yaw);
 		set_cfg_bits(load, handling, navigation, autonomy, error, pulse);
-
 	};
-
-
-	// TODO - safe velocity !!!
 
 private:
 
@@ -51,9 +73,9 @@ private:
 		// converts (float) [m/s] into (short) [0,1 mm/s]
 		short short_vx = (short) (10000*vx);
 		short short_vy = (short) (10000*vy);
+
 		// converts (float) [deg/s] into (short) [0,01 deg/s]
 		short short_v_yaw = (short) (100*v_yaw);
-
 
 		// converts (short) into (BYTE)
 		BYTE b_vx[2];
@@ -78,7 +100,6 @@ private:
 
 		setAt(b_v_yaw[0], 4);
 		setAt(b_v_yaw[1], 5);
-
 	}
 
 	void set_cfg_bits(bool load, bool handling, bool navigation, bool autonomy, bool error, bool pulse){
@@ -110,7 +131,6 @@ private:
 	}
 
 	uint16_t get_twos_complement(int value){
-
 		return ( ~value +1 );	// negate all values and add one to get two's complement
 	}
 
@@ -155,7 +175,6 @@ public:
 				std::dec << " len=" << getLength() <<
 							" vx=" << d_vx << "[m/s] vy=" << d_vy << "[m/s] v_yaw=" << d_v_yaw << "[deg/s] cfg=" <<
 				std::bitset<8>(msg_bDat_[7]) << std::endl;
-
 	}
 
 };
