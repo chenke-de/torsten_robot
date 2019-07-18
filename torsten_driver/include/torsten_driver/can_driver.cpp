@@ -55,7 +55,7 @@
  * Establishing the CAN connection
  */
 CanDriver::CanDriver(){
-    // get node name
+
     name_ = ros::this_node::getName().c_str();
 
 	// initialize publishers
@@ -102,10 +102,6 @@ CanDriver::CanDriver(){
     sound_cmd_running_ = false;
     bolts_cmd_running_ = false;
 
-    // boolean for marking loaded (true) or unloaded state (false)
-    load_state_ = false;
-    load_config_state_ = false;
-
     // initialization of further variables
 	x_ = 0.0;
 	y_ = 0.0;
@@ -125,14 +121,6 @@ CanDriver::CanDriver(){
 	// instantiation of can bus object (used to send/receive process data objects (PDOs))
 	can_bus_ = new PeakCANUSB();
 
-	// initialization of ros service clients
-	srv_bolts_up_ = nh.serviceClient<torsten_driver::boltsState>(name_ + "/bolts_up");
-	srv_bolts_down_ = nh.serviceClient<torsten_driver::boltsState>(name_ + "/bolts_down");
-
-	// initialization of bolts state publisher
-	pub_bolts_up_ 		= nh.advertise<std_msgs::String>(name_ + "/bolts_up_state", 10);
-	pub_bolts_down_ 	= nh.advertise<std_msgs::String>(name_ + "/bolts_down_state", 10);
-
 	// establish CAN bus connection
 	while(true){
 		if( can_bus_->init_connection() ){
@@ -141,7 +129,6 @@ CanDriver::CanDriver(){
 		} else{
 			ROS_WARN("%s: CAN connection not established - retrying connection initialization", name_.c_str());
 		}
-		// sleep for a second
 		sleep(1);
 	}
 }
@@ -436,48 +423,10 @@ CanDriver::can_send_cmd_vel(const ros::TimerEvent& e){
 			setHandling(false);
 			bolts_cmd_running_ = false;
 
-			// generate new boltsState message to inform of the new bolts state
-			torsten_driver::boltsState bolts_state_down_srv;
-			bolts_state_down_srv.request.data = true;
-
-			if (srv_bolts_down_.call(bolts_state_down_srv))
-			{
-				ROS_INFO("%s: Bolts are moved down - sending srv to torsten_driver/bolts_down", name_.c_str());
-			} else {
-				ROS_INFO("%s: Bolts are moved down - sending srv to torsten_driver/bolts_down - service call failed", name_.c_str());
-			}
-
-			/* Publish the current bolts state
-			 * TODO: Embedding these functionalities into a designated
-			 * robot state topic
-			 */
-			std_msgs::String msg;
-			msg.data = "down";
-			pub_bolts_down_.publish(msg);
-
 		} else if (!isLoaded() && isInHandlingMode() && bolts_up_received_) {
 			setLoaded(false);
 			setHandling(false);
 			bolts_cmd_running_ = false;
-
-			// generate new boltsState message to inform of the new bolts state
-			torsten_driver::boltsState bolts_state_up_srv;
-			bolts_state_up_srv.request.data = true;
-
-			if (srv_bolts_up_.call(bolts_state_up_srv))
-			{
-				ROS_INFO("%s: Bolts are moved up - sending srv to torsten_driver/bolts_up", name_.c_str());
-			} else {
-				ROS_INFO("%s: Bolts are moved up - sending srv to torsten_driver/bolts_up - service call failed", name_.c_str());
-			}
-
-			/* Publish the current bolts state
-			 * TODO: Embedding these functionalities into a designated
-			 * robot state topic
-			 */
-			std_msgs::String msg;
-			msg.data = "up";
-			pub_bolts_up_.publish(msg);
 		}
 	}
 
@@ -497,7 +446,6 @@ CanDriver::can_send_cmd_vel(const ros::TimerEvent& e){
 
 	// Generate message to publish the actual send vel command - for debugging purposes
 	geometry_msgs::Twist cmd_vel;
-	cmd_vel = cmd_vel_;
 
 	// check if the last cmd_vel message is not too old
 	if( (ros::Time::now() - time_last_cmd_vel_) < ros::Duration(cfg_declare_dead_duration_)){
@@ -533,56 +481,41 @@ CanDriver::can_send_cmd_vel(const ros::TimerEvent& e){
 void
 CanDriver::can_read_odom(const ros::TimerEvent& e){
 
-	// instantiate CAN input message
 	CANMessage* msg = new CANMessage;
 
-	// read messages
-	if( can_bus_->receive_msg((*msg))){
+	// read messages and validate message ID
+	if(can_bus_->receive_msg((*msg)) && msg->getID() == 0x190){
 
-		// read message of specific ID
-		if( msg->getID() == 0x190){
+	    // cast input message into odometry message type
+        CANMessage_Odometry* odom_msg = static_cast<CANMessage_Odometry*>(msg);
 
-			// cast input message into odometry message type
-			CANMessage_Odometry* odom_msg = static_cast<CANMessage_Odometry*>(msg);
+        /* copy input current velocity into member variable
+         * input velocities in x and y are received in unit [m/s]
+         * input angular velocity is received in unit [rad/s]
+         */
+        odom_.linear.x 	= odom_msg->get_vel_x();
+        odom_.linear.y 	= odom_msg->get_vel_y();
+        odom_.angular.z = (odom_msg->get_vel_yaw() * M_PI / 180);
 
-			/* copy input current velocity into member variable
-			 * input velocities in x and y are received in unit [m/s]
-			 * input angular velocity is received in unit [rad/s]
-			 */
-			odom_.linear.x 	= odom_msg->get_vel_x();
-			odom_.linear.y 	= odom_msg->get_vel_y();
-			odom_.angular.z = (odom_msg->get_vel_yaw() * M_PI / 180);
+        // set the odometry received marker
+        new_odometry_arrived_ = true;
 
-			// set the odometry received marker
-			new_odometry_arrived_ = true;
+        // copy protective field and warning field states
+        warning_field_1_host_   = odom_msg->get_warning_field_1_host();
+        warning_field_2_host_   = odom_msg->get_warning_field_2_host();
+        warning_field_1_guest_  = odom_msg->get_warning_field_1_guest();
+        warning_field_2_guest_  = odom_msg->get_warning_field_2_guest();
+        protective_field_host_  = odom_msg->get_protective_field_host();
+        protective_field_guest_ = odom_msg->get_protective_field_guest();
 
-			// copy protective field and warning field states
-			warning_field_1_host_ = odom_msg->get_warning_field_1_host();
-			warning_field_2_host_ = odom_msg->get_warning_field_2_host();
-			warning_field_1_guest_ = odom_msg->get_warning_field_1_guest();
-			warning_field_2_guest_ = odom_msg->get_warning_field_2_guest();
-			protective_field_host_ = odom_msg->get_protective_field_host();
-			protective_field_guest_ = odom_msg->get_protective_field_guest();
-
-			// copy state values into member variables
-			bolts_down_received_    = odom_msg->get_bolts_down();
-			bolts_up_received_      = odom_msg->get_bolts_up();
-			handling_received_      = odom_msg->get_handling();
-			navigation_received_    = odom_msg->get_navigation();
-			autonomy_received_      = odom_msg->get_autonomy();
-			error_received_         = odom_msg->get_error();
-			pulse_received_         = odom_msg->get_pulse();
-
-			// change the loading state of the vehicle - loaded (true) or unloaded state (false)
-			/* if no concrete bolts state is received (prob. while moving up or down)
-			 * then assume a loaded state
-			 */
-			if (bolts_down_received_) {
-				load_state_ = false;
-			} else {
-				load_state_ = true;
-			}
-		}
+        // copy state values into member variables
+        bolts_down_received_    = odom_msg->get_bolts_down();
+        bolts_up_received_      = odom_msg->get_bolts_up();
+        handling_received_      = odom_msg->get_handling();
+        navigation_received_    = odom_msg->get_navigation();
+        autonomy_received_      = odom_msg->get_autonomy();
+        error_received_         = odom_msg->get_error();
+        pulse_received_         = odom_msg->get_pulse();
 	}
 }
 

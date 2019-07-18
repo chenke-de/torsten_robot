@@ -122,7 +122,6 @@
       bool moveBoltsDownCB(torsten_driver::setBolts::Request &req, torsten_driver::setBolts::Response &res);
       bool playSoundCB(torsten_driver::setSound::Request &req, torsten_driver::setSound::Response &res);
 
-
 	  // CAN INTERFACE - send cmd_vel to CAN and receive odom from CAN
 	  void can_send_cmd_vel(const ros::TimerEvent& e);
 	  void can_read_odom(const ros::TimerEvent& e);
@@ -163,10 +162,8 @@
 
 	  // timer elements
 	  ros::Time	time_last_cmd_vel_;
-	  ros::Time time_last_sound_cmd_;
 	  ros::Time current_time_;
 	  ros::Time last_time_;
-	  ros::Time last_bolts_cmd_time_;
 	  ros::Time last_sound_cmd_time_;
 
 	  // config variables
@@ -195,18 +192,6 @@
 	  double x_;
 	  double y_;
 	  double yaw_;
-
-	  // service clients to mark bolts state
-	  ros::ServiceClient srv_bolts_up_;
-	  ros::ServiceClient srv_bolts_down_;
-
-	  // same as publisher -ToDo: Replace this with the services
-	  ros::Publisher pub_bolts_up_;
-	  ros::Publisher pub_bolts_down_;
-
-	  // booleans for marking loaded (true) or unloaded state (false) - and for the current configuration
-	  bool load_state_;
-	  bool load_config_state_;
 
 	  // using the warn field velocity reduction
 	  bool cfg_use_warn_fields_;
