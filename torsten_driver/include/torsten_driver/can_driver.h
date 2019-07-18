@@ -38,8 +38,8 @@
  * Former Author: Sebastian Reuter (sebastian.reuter@ima-zlw-ifu.rwth-aachen.de)
  *********************************************************************/
 
-#ifndef _CAN_DRIVER_H_
-#define _CAN_DRIVER_H_
+#ifndef _TORSTEN_DRIVER_H_
+#define _TORSTEN_DRIVER_H_
 
 #include <vector>
 #include <string>
@@ -81,17 +81,17 @@
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
 
-  class CanDriver{
+  class TorstenDriver{
 
     public:
 	  // typedefs
 	  typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 	  // Constructor
-	  CanDriver();
+      TorstenDriver();
 
 	  // Destructor
-	  ~CanDriver();
+	  ~TorstenDriver();
 
 	  ros::NodeHandle nh;
 

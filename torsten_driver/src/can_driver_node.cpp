@@ -44,37 +44,37 @@ int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "torsten_driver_node");
 
-	CanDriver tcd;
+    TorstenDriver tcd;
 
 	// subscriber cmd_vel messages
-	ros::Subscriber cmd_vel_sub = tcd.nh.subscribe("cmd_vel", 20, &CanDriver::cmd_vel_callback, &tcd);
+	ros::Subscriber cmd_vel_sub = tcd.nh.subscribe("cmd_vel", 20, &TorstenDriver::cmd_vel_callback, &tcd);
 
 	// send CAN communication
-	ros::Timer timer_send_cmd_vel = 	tcd.nh.createTimer(ros::Duration(0.001),  &CanDriver::can_send_cmd_vel, &tcd);
+	ros::Timer timer_send_cmd_vel = 	tcd.nh.createTimer(ros::Duration(0.001),  &TorstenDriver::can_send_cmd_vel, &tcd);
 
 	// read CAN communication
-	ros::Timer timer_read_odom = 		tcd.nh.createTimer(ros::Duration(0.001),  &CanDriver::can_read_odom, &tcd);
+	ros::Timer timer_read_odom = 		tcd.nh.createTimer(ros::Duration(0.001),  &TorstenDriver::can_read_odom, &tcd);
 
 	// publisher odometry
-	ros::Timer timer_publish_odom = 	tcd.nh.createTimer(ros::Duration(0.001),  &CanDriver::publish_odom, &tcd);
+	ros::Timer timer_publish_odom = 	tcd.nh.createTimer(ros::Duration(0.001),  &TorstenDriver::publish_odom, &tcd);
 
     // publisher torsten_state
-    ros::Timer timer_torsten_state = 	tcd.nh.createTimer(ros::Duration(0.001),  &CanDriver::publish_torsten_state, &tcd);
+    ros::Timer timer_torsten_state = 	tcd.nh.createTimer(ros::Duration(0.001),  &TorstenDriver::publish_torsten_state, &tcd);
 
 	// reduces maximum allowed velocity if warning field is activated
-	ros::Timer timer_reduce_speed_safety = 	tcd.nh.createTimer(ros::Duration(0.01),  &CanDriver::scan_field_safety_evaluation, &tcd);
+	ros::Timer timer_reduce_speed_safety = 	tcd.nh.createTimer(ros::Duration(0.01),  &TorstenDriver::scan_field_safety_evaluation, &tcd);
 
 	// standard service server
-	ros::ServiceServer driver_server_setLoaded              = tcd.nh.advertiseService(ros::this_node::getName() + "/setLoaded", &CanDriver::setLoadedsrv, &tcd);
-	ros::ServiceServer driver_server_setInHandlingMode      = tcd.nh.advertiseService(ros::this_node::getName() + "/setInHandlingMode", &CanDriver::setInHandlingModesrv, &tcd);
-	ros::ServiceServer driver_server_setInNavigationMode    = tcd.nh.advertiseService(ros::this_node::getName() + "/setInNavigationMode", &CanDriver::setInNavigationModesrv, &tcd);
-	ros::ServiceServer driver_server_setInAutonomousMode    = tcd.nh.advertiseService(ros::this_node::getName() + "/setInAutonomousMode", &CanDriver::setInAutonomousModesrv, &tcd);
-	ros::ServiceServer driver_server_setIsError             = tcd.nh.advertiseService(ros::this_node::getName() + "/setIsError", &CanDriver::setIsErrorsrv, &tcd);
+	ros::ServiceServer driver_server_setLoaded              = tcd.nh.advertiseService(ros::this_node::getName() + "/setLoaded", &TorstenDriver::setLoadedsrv, &tcd);
+	ros::ServiceServer driver_server_setInHandlingMode      = tcd.nh.advertiseService(ros::this_node::getName() + "/setInHandlingMode", &TorstenDriver::setInHandlingModesrv, &tcd);
+	ros::ServiceServer driver_server_setInNavigationMode    = tcd.nh.advertiseService(ros::this_node::getName() + "/setInNavigationMode", &TorstenDriver::setInNavigationModesrv, &tcd);
+	ros::ServiceServer driver_server_setInAutonomousMode    = tcd.nh.advertiseService(ros::this_node::getName() + "/setInAutonomousMode", &TorstenDriver::setInAutonomousModesrv, &tcd);
+	ros::ServiceServer driver_server_setIsError             = tcd.nh.advertiseService(ros::this_node::getName() + "/setIsError", &TorstenDriver::setIsErrorsrv, &tcd);
 
 	// special service server
-	ros::ServiceServer move_bolts_up_server    = tcd.nh.advertiseService(ros::this_node::getName() + "/move_bolts_up", &CanDriver::moveBoltsUpCB, &tcd);
-	ros::ServiceServer move_bolts_down_server  = tcd.nh.advertiseService(ros::this_node::getName() + "/move_bolts_down", &CanDriver::moveBoltsDownCB, &tcd);
-	ros::ServiceServer sound_cmd_server        = tcd.nh.advertiseService(ros::this_node::getName() + "/play_sound", &CanDriver::playSoundCB, &tcd);
+	ros::ServiceServer move_bolts_up_server    = tcd.nh.advertiseService(ros::this_node::getName() + "/move_bolts_up", &TorstenDriver::moveBoltsUpCB, &tcd);
+	ros::ServiceServer move_bolts_down_server  = tcd.nh.advertiseService(ros::this_node::getName() + "/move_bolts_down", &TorstenDriver::moveBoltsDownCB, &tcd);
+	ros::ServiceServer sound_cmd_server        = tcd.nh.advertiseService(ros::this_node::getName() + "/play_sound", &TorstenDriver::playSoundCB, &tcd);
 
 	while( tcd.nh.ok() ){
 		ros::spin();

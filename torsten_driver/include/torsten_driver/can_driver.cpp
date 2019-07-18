@@ -39,8 +39,8 @@
  *********************************************************************/
 
 
-#ifndef _CAN_DRIVER_CPP_
-#define _CAN_DRIVER_CPP_
+#ifndef _TORSTEN_DRIVER_CPP_
+#define _TORSTEN_DRIVER_CPP_
 
 #include <iostream>
 #include <unistd.h>
@@ -53,7 +53,7 @@
  * Initializing private member variables
  * Establishing the CAN connection
  */
-CanDriver::CanDriver(){
+TorstenDriver::TorstenDriver(){
 
     name_ = ros::this_node::getName().c_str();
 
@@ -135,7 +135,7 @@ CanDriver::CanDriver(){
 /* Destructor
  *
  */
-CanDriver::~CanDriver(){
+TorstenDriver::~TorstenDriver(){
 	close_connection();
 }
 
@@ -143,7 +143,7 @@ CanDriver::~CanDriver(){
  *
  */
 void
-CanDriver::close_connection(){
+TorstenDriver::close_connection(){
 	can_bus_->close_connection();
 	ROS_INFO("%s: CAN connection closed", name_.c_str());
 }
@@ -152,7 +152,7 @@ CanDriver::close_connection(){
  *
  */
 void
-CanDriver::load_parameters(){
+TorstenDriver::load_parameters(){
     /*
      * TODO: This parameter validation and setting should be
      * done in a separate configuration class structure
@@ -206,7 +206,7 @@ CanDriver::load_parameters(){
  * @param res true if bolts are moved up
  */
 bool
-CanDriver::moveBoltsUpCB(torsten_driver::setBolts::Request &req, torsten_driver::setBolts::Response &res)
+TorstenDriver::moveBoltsUpCB(torsten_driver::setBolts::Request &req, torsten_driver::setBolts::Response &res)
 {
 	// if a bolts up service call was received - move the bolts up
 	if ((bool) req.data)
@@ -231,7 +231,7 @@ CanDriver::moveBoltsUpCB(torsten_driver::setBolts::Request &req, torsten_driver:
  * @param res true if bolts are moved down
  */
 bool
-CanDriver::moveBoltsDownCB(torsten_driver::setBolts::Request &req, torsten_driver::setBolts::Response &res)
+TorstenDriver::moveBoltsDownCB(torsten_driver::setBolts::Request &req, torsten_driver::setBolts::Response &res)
 {
 	// if a bolts down service call was received - move the bolts down
 	if ((bool) req.data)
@@ -256,7 +256,7 @@ CanDriver::moveBoltsDownCB(torsten_driver::setBolts::Request &req, torsten_drive
  * @param res true if sound file was played successfully
  */
 bool
-CanDriver::playSoundCB(torsten_driver::setSound::Request &req, torsten_driver::setSound::Response &res)
+TorstenDriver::playSoundCB(torsten_driver::setSound::Request &req, torsten_driver::setSound::Response &res)
 {
 	if (strcmp(req.sound.c_str(), "start_moving") == 0)
 	{
@@ -308,7 +308,7 @@ CanDriver::playSoundCB(torsten_driver::setSound::Request &req, torsten_driver::s
  * received commands will be stored in member variable
  */
 void
-CanDriver::cmd_vel_callback(const geometry_msgs::Twist::ConstPtr &cmd_vel){
+TorstenDriver::cmd_vel_callback(const geometry_msgs::Twist::ConstPtr &cmd_vel){
 
 	cmd_vel_.linear.x = cmd_vel->linear.x;
 	cmd_vel_.linear.y = cmd_vel->linear.y;
@@ -326,7 +326,7 @@ CanDriver::cmd_vel_callback(const geometry_msgs::Twist::ConstPtr &cmd_vel){
  *
  */
 void
-CanDriver::publish_odom(const ros::TimerEvent& e){
+TorstenDriver::publish_odom(const ros::TimerEvent& e){
 
 	// publish only if new CAN message received
 	if(new_odometry_arrived_){
@@ -407,7 +407,7 @@ CanDriver::publish_odom(const ros::TimerEvent& e){
  * @param e ros timer event
  */
 void
-CanDriver::can_send_cmd_vel(const ros::TimerEvent& e){
+TorstenDriver::can_send_cmd_vel(const ros::TimerEvent& e){
 
 	// Instantiate new CAN message
 	CANMessage_Cmd_Vel msg;
@@ -478,7 +478,7 @@ CanDriver::can_send_cmd_vel(const ros::TimerEvent& e){
  * data is separated by message ID
  */
 void
-CanDriver::can_read_odom(const ros::TimerEvent& e){
+TorstenDriver::can_read_odom(const ros::TimerEvent& e){
 
 	CANMessage* msg = new CANMessage;
 
@@ -523,7 +523,7 @@ CanDriver::can_read_odom(const ros::TimerEvent& e){
  * @param e ros timer event
  */
 void
-CanDriver::scan_field_safety_evaluation(const ros::TimerEvent& e)
+TorstenDriver::scan_field_safety_evaluation(const ros::TimerEvent& e)
 {
 	/*
 	 * TODO: Implement this more elegant to enable
@@ -636,7 +636,7 @@ CanDriver::scan_field_safety_evaluation(const ros::TimerEvent& e)
  *
  */
 void
-CanDriver::publish_torsten_state(const ros::TimerEvent& e) {
+TorstenDriver::publish_torsten_state(const ros::TimerEvent& e) {
     torsten_msgs::TorstenState msg;
 
     msg.loaded =                    isLoaded();
@@ -665,68 +665,72 @@ CanDriver::publish_torsten_state(const ros::TimerEvent& e) {
 }
 
 bool
-CanDriver::isBoltsMovedUp() const {
+TorstenDriver::isBoltsMovedUp() const {
 	return bolts_up_received_;
 }
 
 bool
-CanDriver::isBoltsMovedDown() const {
+TorstenDriver::isBoltsMovedDown() const {
 	return bolts_down_received_;
 }
 
 bool
-CanDriver::isInAutonomousMode() const {
+TorstenDriver::isInAutonomousMode() const {
 	return autonomous_mode_;
 }
 
 void
-CanDriver::setAutonomousMode(bool autonomous) {
+TorstenDriver::setAutonomousMode(bool autonomous) {
     autonomous_mode_ = autonomous;
 }
 
 bool
-CanDriver::isError() const {
+TorstenDriver::isError() const {
     return error_;
 }
 
-void CanDriver::setError(bool error) {
+void
+TorstenDriver::setError(bool error) {
 	error_ = error;
 }
 
-bool CanDriver::isInHandlingMode() const {
+bool
+TorstenDriver::isInHandlingMode() const {
 	return handling_mode_;
 }
 
-void CanDriver::setHandling(bool handling) {
+void
+TorstenDriver::setHandling(bool handling) {
 	handling_mode_ = handling;
 }
 
 bool
-CanDriver::isLoaded() const {
+TorstenDriver::isLoaded() const {
 	return loaded_;
 }
 
 void
-CanDriver::setLoaded(bool loaded) {
+TorstenDriver::setLoaded(bool loaded) {
 	loaded_ = loaded;
 }
 
-bool CanDriver::isInNavigationMode() const {
+bool
+TorstenDriver::isInNavigationMode() const {
 	return navigation_mode_;
 }
 
 void
-CanDriver::setNavigationMode(bool navigation) {
+TorstenDriver::setNavigationMode(bool navigation) {
 	navigation_mode_ = navigation;
 }
 
 bool
-CanDriver::Pulse() const {
+TorstenDriver::Pulse() const {
 	return pulse_;
 }
 
 void
-CanDriver::setPulse(bool pulse) {
+TorstenDriver::setPulse(bool pulse) {
 	pulse_ = pulse;
 }
 
@@ -736,31 +740,31 @@ CanDriver::setPulse(bool pulse) {
  */
 
 bool
-CanDriver::setLoadedsrv(torsten_driver::setBit::Request &req, torsten_driver::setBit::Response &res) {
+TorstenDriver::setLoadedsrv(torsten_driver::setBit::Request &req, torsten_driver::setBit::Response &res) {
 	loaded_ = (bool)req.data;
     return true;
 }
 
 bool
-CanDriver::setInHandlingModesrv(torsten_driver::setBit::Request &req, torsten_driver::setBit::Response &res) {
+TorstenDriver::setInHandlingModesrv(torsten_driver::setBit::Request &req, torsten_driver::setBit::Response &res) {
      handling_mode_ = (bool)req.data;
      return true;
 }
 
 bool
-CanDriver::setInNavigationModesrv(torsten_driver::setBit::Request &req, torsten_driver::setBit::Response &res) {
+TorstenDriver::setInNavigationModesrv(torsten_driver::setBit::Request &req, torsten_driver::setBit::Response &res) {
     navigation_mode_ = (bool)req.data;
     return true;
 }
 
 bool
-CanDriver::setInAutonomousModesrv(torsten_driver::setBit::Request &req, torsten_driver::setBit::Response &res) {
+TorstenDriver::setInAutonomousModesrv(torsten_driver::setBit::Request &req, torsten_driver::setBit::Response &res) {
     autonomous_mode_ = (bool)req.data;
     return true;
 }
 
 bool
-CanDriver::setIsErrorsrv(torsten_driver::setBit::Request &req, torsten_driver::setBit::Response &res) {
+TorstenDriver::setIsErrorsrv(torsten_driver::setBit::Request &req, torsten_driver::setBit::Response &res) {
 	error_ = (bool)req.data;
     return true;
 }
