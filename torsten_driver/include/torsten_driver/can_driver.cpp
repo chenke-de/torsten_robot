@@ -59,8 +59,8 @@ CanDriver::CanDriver(){
     name_ = ros::this_node::getName().c_str();
 
 	// initialize publishers
-	odom_pub_ = nh.advertise<nav_msgs::Odometry>("odom", 50);
-    torsten_state_pub_ = nh.advertise<torsten_msgs::TorstenState>("torsten_state", 50);
+	odom_pub_ = nh.advertise<nav_msgs::Odometry>(name_ + "/odom", 50);
+    torsten_state_pub_ = nh.advertise<torsten_msgs::TorstenState>(name_ + "/torsten_state", 50);
 
 	// initialize ROS parameters
     load_parameters();
@@ -126,12 +126,12 @@ CanDriver::CanDriver(){
 	can_bus_ = new PeakCANUSB();
 
 	// initialization of ros service clients
-	srv_bolts_up_ = nh.serviceClient<torsten_driver::boltsState>("torsten_driver_node/bolts_up");
-	srv_bolts_down_ = nh.serviceClient<torsten_driver::boltsState>("torsten_driver_node/bolts_down");
+	srv_bolts_up_ = nh.serviceClient<torsten_driver::boltsState>(name_ + "/bolts_up");
+	srv_bolts_down_ = nh.serviceClient<torsten_driver::boltsState>(name_ + "/bolts_down");
 
 	// initialization of bolts state publisher
-	pub_bolts_up_ 		= nh.advertise<std_msgs::String>("/torsten_driver/bolts_up_state", 10);
-	pub_bolts_down_ 	= nh.advertise<std_msgs::String>("/torsten_driver/bolts_down_state", 10);
+	pub_bolts_up_ 		= nh.advertise<std_msgs::String>(name_ + "/bolts_up_state", 10);
+	pub_bolts_down_ 	= nh.advertise<std_msgs::String>(name_ + "/bolts_down_state", 10);
 
 	// establish CAN bus connection
 	while(true){
