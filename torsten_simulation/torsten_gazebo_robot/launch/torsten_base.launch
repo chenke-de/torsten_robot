@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="world" default="sim_map"/>
+  <arg name="init_pos_x" default="0.0"/>
+  <arg name="init_pos_y" default="0.0"/>
+  <arg name="init_pos_z" default="0.0"/>
+
+  <!-- Load the TORsten URDF description -->
+  <param name="robot_description" command="$(find xacro)/xacro $(find torsten_description)/robots/torsten_base.urdf.xacro --inorder" />
+
+  <!-- Run RViz -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find torsten_description)/rviz/urdf.rviz" required="true" />
+
+  <!-- launch world -->
+  <include file="$(find torsten_gazebo_world)/launch/$(arg world).launch" />
+
+  <!-- spawn gazebo model -->
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_robot" respawn="false" output="screen"
+    args="-param robot_description
+          -urdf
+          -x $(arg init_pos_x)
+          -y $(arg init_pos_y)
+          -z $(arg init_pos_z)
+          -model torsten">
+  </node>
+
+  <!-- Load joint state publisher -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="use_gui" value="false"/>
+  </node>
+
+  <!-- launch joint state controller -->
+  <include file="$(find torsten_gazebo_control)/launch/joint_state_controller.launch" />
+  
+  <!-- Load robot state publisher -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="30.0" />
+  </node>
+
+
+<!-- launch amcl for localization -->
+<node pkg="amcl" type="amcl" name="amcl">
+  <remap from="scan" to="scan_front" />
+  <param name="use_map_topic" value="true"/>
+  <param name="odom_frame_id" value="odom"/>
+  <param name="base_frame_id" value="base_link"/>
+  <param name="global_frame_id" value="map"/>
+
+  <param name="odom_model_type" value="omni"/>
+  <param name="gui_publish_rate" value="-1.0"/>
+
+  <param name="min_particles" value="100"/>
+  <param name="max_particles" value="5000"/>
+
+  <param name="kld_err" value="0.01"/>
+  <param name="kld_z" value="0.99"/>
+  
+  <param name="odom_alpha1" value="0.2"/>
+  <param name="odom_alpha2" value="0.2"/>
+  <param name="odom_alpha3" value="0.2"/>
+  <param name="odom_alpha4" value="0.2"/>
+  <param name="odom_alpha5" value="0.2"/>
+ 
+  <param name="laser_max_beams" value="60"/>
+  <param name="laser_z_hit" value="0.95"/>
+  <param name="laser_z_short" value="0.1"/>
+  <param name="laser_z_max" value="0.05"/>
+  <param name="laser_z_rand" value="0.05"/>
+
+  <param name="laser_max_range" value="5.6"/>
+  <param name="laser_min_range" value="0.1"/>
+
+  <param name="laser_sigma_hit" value="0.2"/>
+  <param name="laser_lambda_short" value="0.1"/>
+
+  <param name="laser_model_type" value="likelihood_field"/>
+  <param name="laser_likelihood_max_dist" value="6.0"/>
+
+  <param name="update_min_d" value="0.1"/>
+  <param name="update_min_a" value="0.05"/>
+
+  <param name="resample_interval" value="2"/>
+  <param name="transform_tolerance" value="0.1"/>
+
+  <param name="recovery_alpha_slow" value="0.0"/>
+  <param name="recovery_alpha_fast" value="0.0"/>
+</node>
+
+  <!-- The map file -->
+  <arg name="map_file" default="$(find torsten_gazebo_robot)/launch/maps/sim_map.yaml"/>
+
+  <!-- Run the map server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+  <!-- launch laser filter -->
+  <!--include file="$(find laser_filter)/launch/laser_filter_and_merge.launch" /-->
+
+  <!--node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="$(find teb_local_planner_tutorials)/cfg/omnidir/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find teb_local_planner_tutorials)/cfg/omnidir/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find teb_local_planner_tutorials)/cfg/omnidir/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find teb_local_planner_tutorials)/cfg/omnidir/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find teb_local_planner_tutorials)/cfg/omnidir/teb_local_planner_params.yaml" command="load" />
+
+    <param name="base_global_planner" value="global_planner/GlobalPlanner" />
+    <param name="planner_frequency" value="1.0" />
+    <param name="planner_patience" value="5.0" />
+
+    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+    <param name="controller_frequency" value="5.0" />
+    <param name="controller_patience" value="15.0" />
+  </node-->
+
+  <!--node pkg="navgraph" type="navgraph_rosnode" name="navgraph_rosnode" output="screen">
+  <rosparam command="load" file="$(find navgraph)/cfg/navgraph.yaml" />
+  </node-->
+
+</launch>
