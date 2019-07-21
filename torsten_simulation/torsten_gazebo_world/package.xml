@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package>
   <name>torsten_gazebo_world</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <description>The torsten_gazebo_world package</description>
 
-  <maintainer email="christoph.henke@ifu.rwth-aachen.de">Christoph Henke</maintainer>
+  <maintainer email="christoph.henke@ima-ifu.rwth-aachen.de">Christoph Henke</maintainer>
 
   <license>BSD</license>
 
