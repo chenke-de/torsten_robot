@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>torsten_robot</name>
-  <version>1.0.4</version>
+  <version>1.0.0</version>
   <description>
     The package contains the TORsten ROS integration.
   </description>
 
-  <maintainer email="christoph.henke@ifu.rwth-aachen.de">Christoph Henke</maintainer>
-  <author email="christoph.henke@ifu.rwth-aachen.de">Christoph Henke</author>
+  <maintainer email="christoph.henke@ima-ifu.rwth-aachen.de">Christoph Henke</maintainer>
+  <author email="christoph.henke@ima-ifu.rwth-aachen.de">Christoph Henke</author>
 
   <license>BSD</license>
 
@@ -17,6 +17,7 @@
   <exec_depend>torsten_driver</exec_depend>
   <exec_depend>torsten_msgs</exec_depend>
   <exec_depend>torsten_navigation</exec_depend>
+  <exec_depend>torsten_simulation</exec_depend>
 
   <export>
     <metapackage/>
