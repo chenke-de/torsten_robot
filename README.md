@@ -42,6 +42,42 @@ make
 sudo make install
 ```
 
+## Installation from source
+
+The torsten_robot packages can be compiled from source. Therefor generate a new catkin workspace, clone the repository, resolve dependencies and compile the packages.
+```
+mkdir -p ~/catkin_ws_torsten/src
+cd ~/catkin_ws_torsten/src
+git clone https://github.com/chenke-de/torsten_robot.git
+cd ~/catkin_ws_torsten
+rosdep install --from-paths src --ignore-src --rosdistro kinetic -y
+catkin_make
+```
+Now source the bash file.
+
+```
+source ~/catkin_ws_torsten/devel/setup.bash
+```
+
+You can now run examples like the robot description:
+
+
+```
+roslaunch torsten_description display_torsten_urdf.launch 
+```
+
+There is also a Gazebo simulation environment for test purposes:
+
+```
+roslaunch torsten_gazebo_robot torsten_base_sim.launch
+```
+
+The connected vehicle (SEW CAN bus and Sick LiDAR scanner) can be started with:
+
+```
+roslaunch torsten_navigation torsten_navigation.launch
+```
+
 # Packages
 
 ## torsten_description
