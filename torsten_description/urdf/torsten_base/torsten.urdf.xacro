@@ -94,7 +94,6 @@
         </geometry>
       </collision>
     </link>
-   
 
     <!-- front left wheel -->
     <joint name="wheel_joint_fl" type="continuous">
@@ -220,12 +219,12 @@
       </collision>
     </link>
  
-    <gazebo>
+    <!--gazebo>
       <static>false</static>
-    </gazebo>
+    </gazebo-->
 
     <!-- extensions -->
-    <xacro:torsten_base_gazebo/>
+   <xacro:torsten_base_gazebo/>
 
   </xacro:macro>
 </robot>

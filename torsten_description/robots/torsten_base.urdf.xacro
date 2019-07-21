@@ -3,7 +3,7 @@
        xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro"
-       name="torsten" >
+       name="torsten_base" >
   
   <!-- torsten base -->
   <xacro:include filename="$(find torsten_description)/urdf/torsten_base/torsten.urdf.xacro" />

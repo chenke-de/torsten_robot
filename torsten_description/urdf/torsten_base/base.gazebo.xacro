@@ -39,6 +39,7 @@
         <commandTopic>cmd_vel</commandTopic>
         <odometryTopic>odom</odometryTopic>
         <odometryFrame>odom</odometryFrame>
+        <publishTf>1</publishTf>
         <odometryRate>100.0</odometryRate>
         <robotBaseFrame>base_link</robotBaseFrame>
       </plugin>
