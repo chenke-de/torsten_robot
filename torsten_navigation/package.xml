@@ -16,6 +16,25 @@
   <run_depend>rospy</run_depend>
   <run_depend>std_msgs</run_depend>
 
+  <depend>teb_local_planner</depend>
+  <depend>global_planner</depend>
+  <depend>base_local_planner</depend>
+  <depend>costmap_2d</depend>
+  <depend>costmap_converter</depend>
+
+  <depend>dynamic_reconfigure</depend>
+  <depend>geometry_msgs</depend>
+  <depend>interactive_markers</depend>
+  <depend>libg2o</depend>
+  <depend>nav_core</depend>
+  <depend>nav_msgs</depend>
+  <depend>pluginlib</depend>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>tf</depend>
+  <depend>tf_conversions</depend>
+  <depend>visualization_msgs</depend>
+
   <export>
   </export>
 </package>
