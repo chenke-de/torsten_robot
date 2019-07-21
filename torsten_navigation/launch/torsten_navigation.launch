@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<launch>
+  <node name="torsten_driver_node" pkg="torsten_driver" type="torsten_driver_node" respawn="false" output="screen">
+      <param name="declare_dead_duration" value="1.0" type="double" />
+      <param name="continuous_angular_factor" value="1.192054143" type="double" />
+      <param name="print_odom_values_to_debug" value="false" type="bool" />
+      <param name="cfg_use_warn_fields" value="false" type="bool" />
+  </node>
+
+  <!-- upload robot description -->
+  <param name="robot_description" command="$(find xacro)/xacro $(find torsten_description)/robots/torsten_base.urdf.xacro --inorder" />
+
+  <!-- start robot state publisher -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="30.0" />
+  </node>
+
+  <!-- start the front laser scanner node -->
+  <node name="sick_tim571_3" pkg="sick_tim" type="sick_tim551_2050001" respawn="false" output="screen">
+    <param name="range_max" type="double" value="25.0" />
+    <param name="hostname" type="string" value="192.168.0.14" />
+    <param name="port" type="string" value="2112" />
+    <param name="timelimit" type="int" value="5" />
+    <param name="frame_id" type="str" value="laser_front" />
+    <remap from="scan" to="scan_front" />
+  </node>
+
+  <!-- start the rear laser scanner node -->
+  <node name="sick_tim571_4" pkg="sick_tim" type="sick_tim551_2050001" respawn="false" output="screen">
+    <param name="range_max" type="double" value="25.0" />
+    <param name="hostname" type="string" value="192.168.0.13" />
+    <param name="port" type="string" value="2112" />
+    <param name="timelimit" type="int" value="5" />
+    <param name="frame_id" type="str" value="laser_rear" />
+    <remap from="scan" to="scan_rear" />
+  </node>
+
+  <!-- launch amcl for localization -->
+  <node pkg="amcl" type="amcl" name="amcl">
+    <remap from="scan" to="scan_front" />
+    <rosparam file="$(find torsten_navigation)/amcl_config/amcl.yaml" command="load" />
+  </node>
+
+  <!-- The map file -->
+  <arg name="map_file" default="$(find torsten_gazebo_robot)/launch/maps/sim_map.yaml"/>
+
+  <!-- Run the map server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+  <!-- Starting move_base -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="$(find torsten_navigation)/move_base_config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find torsten_navigation)/move_base_config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find torsten_navigation)/move_base_config/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find torsten_navigation)/move_base_config/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find torsten_navigation)/move_base_config/teb_local_planner_params.yaml" command="load" />
+
+    <param name="base_global_planner" value="global_planner/GlobalPlanner" />
+    <param name="planner_frequency" value="1.0" />
+    <param name="planner_patience" value="5.0" />
+
+    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+    <param name="controller_frequency" value="5.0" />
+    <param name="controller_patience" value="15.0" />
+  </node>
+
+
+</launch>
