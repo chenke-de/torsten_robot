@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+  <node name="torsten_driver_node" pkg="torsten_driver" type="torsten_driver_node" respawn="false" output="screen">
+      <param name="declare_dead_duration" value="1.0" type="double" />
+      <param name="continuous_angular_factor" value="1.192054143" type="double" /> <!-- 1.192054143 equals 1 / 0.83888 -->
+      <param name="print_odom_values_to_debug" value="false" type="bool" />
+      <param name="cfg_use_warn_fields" value="false" type="bool" />
+  </node>
+</launch>

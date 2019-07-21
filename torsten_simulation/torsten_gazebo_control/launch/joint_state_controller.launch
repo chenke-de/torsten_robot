@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+  <rosparam file="$(find torsten_gazebo_control)/config/joint_state_controller.yaml" command="load"/> 
+
+  <node pkg="controller_manager" type="spawner" name="joint_state_controller_spawner" args="joint_state_controller" respawn="false" output="screen" />
+</launch>

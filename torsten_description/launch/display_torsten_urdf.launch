@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<launch>
+  <!-- Parameters definitions -->
+  <arg name="gui" default="true" />
+
+  <!-- Load the TORsten URDF description -->
+  <param name="robot_description" command="$(find xacro)/xacro $(find torsten_description)/robots/torsten_base.urdf.xacro --inorder" />
+ 
+  <!-- Load joint state publisher -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="use_gui" value="$(arg gui)"/>
+  </node>
+
+  <!-- Load robot state publisher -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="30.0" />
+  </node>
+
+  <!-- Run RViz -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find torsten_description)/rviz/urdf.rviz" required="true" />
+</launch>

@@ -1,0 +1,8 @@
+# This is the srv type for calling the torsten_driver_node
+
+bool data
+
+---
+
+#empty reply
+

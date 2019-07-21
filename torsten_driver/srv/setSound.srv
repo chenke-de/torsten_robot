@@ -1,0 +1,11 @@
+# This is the srv type for playing a sound
+
+# data: true or false - true: play sound
+
+string sound
+
+---
+
+bool done
+# done: true if sound played
+

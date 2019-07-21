@@ -1,0 +1,10 @@
+# This is the srv type for marking the bolts state
+
+# data: true or false
+bool data
+
+---
+
+bool done
+# reply true: bolts moved up or down
+

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro"
+       name="torsten_base" >
+  
+  <!-- torsten base -->
+  <xacro:include filename="$(find torsten_description)/urdf/torsten_base/torsten.urdf.xacro" />
+ 
+  <!-- parameters -->
+  <xacro:torsten_base name="base"/>
+  
+  <!-- sick laser scanner xacro -->
+  <xacro:include filename="$(find torsten_description)/urdf/sensors/sick_tim.urdf.xacro" />
+  
+  <!-- sick tim laser front -->
+  <xacro:sick_tim571 name="laser_front" 
+                     parent_link="base_link" 
+                     ros_topic="scan_front" 
+                     x_offset="0.5595" 
+                     y_offset="-0.355" 
+                     z_offset="0.1" 
+                     roll_offset="-${M_PI}" 
+                     pitch_offset="0" 
+                     yaw_offset="${7*M_PI/4}"/>
+  
+  <!-- sick tim laser rear -->
+  <xacro:sick_tim571 name="laser_rear" 
+                     parent_link="base_link" 
+                     ros_topic="scan_rear" 
+                     x_offset="-0.5595" 
+                     y_offset="0.355" 
+                     z_offset="0.1" 
+                     roll_offset="-${M_PI}" 
+                     pitch_offset="0" 
+                     yaw_offset="${3*M_PI/4}"/>
+</robot>
