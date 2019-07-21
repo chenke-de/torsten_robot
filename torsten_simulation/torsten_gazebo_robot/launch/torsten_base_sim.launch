@@ -10,7 +10,7 @@
   <param name="robot_description" command="$(find xacro)/xacro $(find torsten_description)/robots/torsten_base.urdf.xacro --inorder" />
 
   <!-- Run RViz -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find torsten_description)/rviz/urdf.rviz" required="true" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find torsten_gazebo_robot)/rviz/torsten_sim.rviz" required="true" />
 
   <!-- launch world -->
   <include file="$(find torsten_gazebo_world)/launch/$(arg world).launch" />
