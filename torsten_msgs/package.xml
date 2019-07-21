@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>torsten_msgs</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <description>The torsten msgs package</description>
 
-  <maintainer email="christoph.henke@ifu.rwth-aachen.de">Christoph Henke</maintainer>
+  <maintainer email="christoph.henke@ima-ifu.rwth-aachen.de">Christoph Henke</maintainer>
 
   <license>BSD</license>
 
-  <author email="christoph.henke@ifu.rwth-aachen.de">Christoph Henke</author>
+  <author email="christoph.henke@ima-ifu.rwth-aachen.de">Christoph Henke</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 
