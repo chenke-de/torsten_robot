@@ -3,7 +3,7 @@
  * Software License Agreement (BSD License)
  *
  *  Copyright (c) 2016,
- *  Sebastian Reuter (sebastian.reuter@ifu.rwth-aachen.de)
+ *  Sebastian Reuter (sebastian.reuter@ima-ifu.rwth-aachen.de)
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * Author: Sebastian Reuter (sebastian.reuter@ifu.rwth-aachen.de)
+ * Author: Sebastian Reuter (sebastian.reuter@ima-ifu.rwth-aachen.de)
  *********************************************************************/
 
 #ifndef CANINTERFACE_H_

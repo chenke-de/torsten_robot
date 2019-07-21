@@ -3,8 +3,8 @@
  * Software License Agreement (BSD License)
  *
  *  Copyright (c) 2016,
- *  Christoph Henke (christoph.henke@ifu.rwth-aachen.de).
- *  Sebastian Reuter (sebastian.reuter@ifu.rwth-aachen.de)
+ *  Christoph Henke (christoph.henke@ima-ifu.rwth-aachen.de).
+ *  Sebastian Reuter (sebastian.reuter@ima-ifu.rwth-aachen.de)
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -34,8 +34,8 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * Author: Christoph Henke (christoph.henke@ifu.rwth-aachen.de)
- * Author: Sebastian Reuter (sebastian.reuter@ifu.rwth-aachen.de)
+ * Author: Christoph Henke (christoph.henke@ima-ifu.rwth-aachen.de)
+ * Author: Sebastian Reuter (sebastian.reuter@ima-ifu.rwth-aachen.de)
  *********************************************************************/
 
 #ifndef _CANMESSAGE_ODOMETRY_H_
